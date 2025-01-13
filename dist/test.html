@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Flask API</title>
+</head>
+<body>
+    <h1>Flask API</h1>
+    <form id="numberForm">
+        <label for="numberInput">Enter a angle:</label>
+        <input type="number" id="numberInput" min="0" max="360"required>
+        <button type="submit">Send</button>
+    </form>
+    <pre id="responseOutput"></pre>
+
+    <script>
+        document.getElementById('numberForm').addEventListener('submit', async function (e) {
+            e.preventDefault(); // Prevent the form from submitting the traditional way
+
+            const number = document.getElementById('numberInput').value;
+
+            try {
+                const response = await fetch('http://192.168.1.101:5000/motor/number', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ number: parseInt(number) })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('responseOutput').textContent = JSON.stringify(data);
+                } else {
+                    document.getElementById('responseOutput').textContent = 'Error: ' + data.error;
+                }
+            } catch (error) {
+                document.getElementById('responseOutput').textContent = 'Network error: ' + error;
+            }
+        });
+    </script>
+</body>
+</html>
