@@ -1,0 +1,23 @@
+{
+"ip":"",
+"port":"",
+"com":"",
+"as5600adr":"",
+"multiplexadr":"",
+"displayadr":"",
+"encoders":[{"A":"","B":"","btn":""},
+{"A":"","B":"","btn":""},
+{"A":"","B":"","btn":""}],
+"drivers":[{"dir":"","pulse":"","enable":""},
+{"dir":"","pulse":"","enable":""},
+{"dir":"","pulse":"","enable":""},
+{"dir":"","pulse":"","enable":""},
+{"dir":"","pulse":"","enable":""},
+{"dir":"","pulse":"","enable":""}],
+"joints":[{"jointindex":"", "motorindex":""},
+{"jointindex":"", "motorindex":""},
+{"jointindex":"", "motorindex":""},
+{"jointindex":"", "motorindex":""},
+{"jointindex":"", "motorindex":""}]
+
+}

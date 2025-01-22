@@ -1,6 +1,5 @@
 import time
 import gpio
-#import Encoder
 from models import Encoder
 
 class Motor:
