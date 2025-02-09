@@ -29,52 +29,61 @@ class Motor:
         self.transfer = transfer
         
         self.running = False
-        self.free_run_mode = 0  # Represents direction for free run
         self.step_time = 0.01 / self.steps_per_sec  # Time per step (in seconds)
 
     def target_deg(self, t):
         self.target_pos = t
         self.track_target()
 
-    def step(self, d):
+    def step(self):
         gpio.output(self.step_pin, gpio.HIGH)  # Set step pin HIGH
         time.sleep(0.001)  # Pulse duration
         gpio.output(self.step_pin, gpio.LOW)   # Set step pin LOW
         time.sleep(0.001)  # Pulse duration
-        self.pos += 1
+        #self.pos += 1
 
     def speed(self, sps):
         self.steps_per_sec = sps
         self.step_time = 0.001 / self.steps_per_sec
 
     def stop(self):
-        self.free_run_mode = 0
         self.running = False
 
 
-    def update(self):
-        if self.free_run_mode > 0:
-            self.step(1)
-        elif self.free_run_mode < 0:
-            self.step(-1)
-        elif self.target_pos > self.pos:
-            self.step(1)
-        elif self.target_pos < self.pos:
-            self.step(-1)
+    def set_direction(self):
+        if(self.invert_dir):
+            gpio.output(self.dir_pin,gpio.LOW)
+        else:
+            gpio.output(self.dir_pin,gpio.HIGH)
 
 
     def track_target(self):
-        self.free_run_mode = 0
         self.running = True
+        self.get_direction()
+        self.set_direction()
         while self.running:
-            self.update()
+            
+            self.step()
             #time.sleep(self.step_time)  # Wait according to the set speed
             self.encoder.PrintAngle()
             if ((self.encoder.Angle()<=(self.target_pos+self.trash_hold)) and (self.encoder.Angle()>=(self.target_pos-self.trash_hold))):
                 self.stop()
 
-    
-    
+    def get_direction(self):
+            if(self.target_pos+180>360):
+                if(self.target_pos<self.encoder.Angle() and self.target_pos>self.encoder.Angle()-180):
+                    self.invert_dir=True
+                elif(self.target_pos>self.encoder.Angle()):
+                    self.invert_dir=False
+                elif(self.target_pos<(self.encoder.Angle()-180)):
+                    self.invert_dir=False
+            else:
+                if(self.target_pos>self.encoder.Angle() and self.target_pos<self.encoder.Angle()+180):
+                    self.invert_dir=False
+                if((self.target_pos>=self.encoder.Angle()+180)):    
+                    self.invert_dir=True
+                elif(self.target_pos<self.encoder.Angle()):
+                    self.invert_dir=True
 '''    
     def update(self):
         if self.free_run_mode > 0:

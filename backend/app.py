@@ -8,6 +8,7 @@ CORS(app)
 
 #Comands:
 #source venv/bin/activate
+# chmod 777 /sys/class/gpio/export
 
 
 # import blueprints
@@ -23,14 +24,14 @@ def register_blueprints(app):
                 app.register_blueprint(blueprint)
 
 #api
-'''@app.route('/api', methods=["POST"])
-def submitData():
+@app.route('/api/set/config', methods=["POST"])
+def get_config():
     response_object = {'status':'success'}
     data = request.get_json()
     num   = data['number']
     print(num)
     response_object['message'] ='Data added!'
-    return jsonify(response_object)'''
+    return jsonify(response_object)
 
 
 '''@app.route('/motor/number', methods=['POST'])
@@ -45,9 +46,34 @@ def receive_number():
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400  '''
-    
 
-    
+'''
+from jsonrpcserver import dispatch, result
+@app.route_jsonrpc('/api/angles')
+def get(request):
+    response = dispatch(request.data)
+    print(response)
+    return result(response)
+'''
+
+import json
+with open('data.json', 'r') as file:
+    data = json.load(file)
+file.close
+@app.route('/api/get/angles')
+
+def send_angles():
+    return data.get('angles')
+
+with open('config.json','r') as file:
+    config = json.load(file)
+file.close
+@app.route('/api/get/config')
+def send_config():
+    return config
+
+
+
 #api
 
 

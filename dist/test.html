@@ -7,26 +7,46 @@
 </head>
 <body>
     <h1>Flask API</h1>
-    <form id="numberForm">
-        <label for="numberInput">Enter a angle:</label>
-        <input type="number" id="numberInput" min="0" max="360"required>
+    <form id="M1Form">
+        <label for="M1Input">Enter a angle:</label>
+        <input type="number" id="M1Angle" min="0" max="360"required>
+        <button type="submit">Send</button>
+    </form>
+    <form id="M2Form">
+        <label for="M2Input">Enter a angle:</label>
+        <input type="number" id="M2Angle" min="0" max="360"required>
+        <button type="submit">Send</button>
+    </form>
+    <form id="M3Form">
+        <label for="M3Input">Enter a angle:</label>
+        <input type="number" id="M3Angle" min="0" max="360"required>
+        <button type="submit">Send</button>
+    </form>
+    <form id="M4Form">
+        <label for="M4Input">Enter a angle:</label>
+        <input type="number" id="M4Angle" min="0" max="360"required>
+        <button type="submit">Send</button>
+    </form>
+    <form id="M5Form">
+        <label for="M5Input">Enter a angle:</label>
+        <input type="number" id="M5Angle" min="0" max="360"required>
         <button type="submit">Send</button>
     </form>
     <pre id="responseOutput"></pre>
 
     <script>
-        document.getElementById('numberForm').addEventListener('submit', async function (e) {
+        document.getElementById('M1Form').addEventListener('submit', async function (e) {
             e.preventDefault(); // Prevent the form from submitting the traditional way
 
-            const number = document.getElementById('numberInput').value;
+            const M1angle = document.getElementById('M1Angle').value;
 
             try {
-                const response = await fetch('http://192.168.1.101:5000/motor/number', {
+                const response = await fetch('http://192.168.1.101:5000/motor/api/M1Angle', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ number: parseInt(number) })
+                    body: JSON.stringify({ M1angle: parseInt(M1angle) })
                 });
 
                 const data = await response.json();
