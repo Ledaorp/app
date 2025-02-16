@@ -3,7 +3,7 @@ from periphery import I2C
 
 class AS5600:
     # Constants for AS5600
-    DEVICE_AS5600 = 0x36
+    DEVICE_AS5600 = 0x70
     ANGLE_REGISTER = 0x0C  # Register address for angle
 
     def __init__(self, bus_number="/dev/i2c-1"):
@@ -12,7 +12,8 @@ class AS5600:
 
     def ReadRawAngle(self):  # Read angle (0-360 represented as 0-4096)
         # Write the address of the angle register to read from
-        write_msg = I2C.Message([self.ANGLE_REGISTER])
+        #write_msg = I2C.Message([self.ANGLE_REGISTER])
+        write_msg = I2C.Message([1 << 0x0])
         self.i2c.transfer(self.DEVICE_AS5600, [write_msg])
         
         # Prepare a message to read 2 bytes
