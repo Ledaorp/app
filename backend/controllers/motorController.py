@@ -2,11 +2,11 @@ from flask import jsonify, render_template, Blueprint, request
 #from models import Motor, Encoder
 import time
 #from periphery import I2C
-
-
+from app import send, set
 
 
 BPmotorController = Blueprint("motorController", __name__)
+'''
 @BPmotorController.route('/motor/api/M1Angle', methods=['POST'])
 def receive_number():
     try:
@@ -26,4 +26,17 @@ def receive_number():
 def start():
    
     return render_template('test.html')
+   ''' 
+@BPmotorController.route('/motor')
+def begin():
+    #return setup(send('config.json'))
+    return start(send('data.json'))
+
+def setup(config_json):
+    #m1 = Motor.Motor(config_json['drivers'][0]['step'], config_json['drivers'][0]['dir'],config_json['drivers'][0]['enable'], speed_sps=10)
+    return (config_json['drivers'][0]['step'])
+
+def start(angles_json):
+    #m1.target_deg(angles_json['angles']['m1'])
+    return(angles_json['angles']['m1'])
     

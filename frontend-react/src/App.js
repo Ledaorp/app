@@ -66,6 +66,11 @@ function App() {
                                     "m3":angle_values.m3_value,
                                     "m4":angle_values.m4_value,
                                     "m5":angle_values.m5_value
+                                },
+                                "position":{
+                                    "x": "0",
+                                    "y": "0",
+                                    "z": "0"
                                 }};
     
           const response = await fetch('http://localhost:5000/api/set/data', {
