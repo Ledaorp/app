@@ -3,13 +3,14 @@ import gpio
 from models import Encoder
 
 class Motor:
-    def __init__(self, step_pin, dir_pin, en_pin=None, steps_per_rev=200, speed_sps=10, invert_dir=False, transfer = 0):
+    def __init__(self, step_pin, dir_pin, en_pin=None, encoder_channel=0, steps_per_rev=200, speed_sps=10, invert_dir=False, transfer = 0):
         # Initialize GPIO pin numbers
         self.step_pin = step_pin
         self.dir_pin = dir_pin
         self.en_pin = en_pin
         
         self.encoder=Encoder.AS5600()
+        self.encoder.set_channel(encoder_channel)
         # Setup GPIO modes
         gpio.setup(step_pin, gpio.OUT)
         gpio.setup(dir_pin, gpio.OUT)
@@ -33,7 +34,6 @@ class Motor:
 
     def target_deg(self, t):
         self.target_pos = t
-        self.track_target()
 
     def step(self):
         gpio.output(self.step_pin, gpio.HIGH)  # Set step pin HIGH
@@ -56,6 +56,8 @@ class Motor:
         else:
             gpio.output(self.dir_pin,gpio.HIGH)
 
+    def get_encoder(self):
+        return self.encoder.Angle()
 
     def track_target(self):
         self.running = True
@@ -65,7 +67,7 @@ class Motor:
             
             self.step()
             #time.sleep(self.step_time)  # Wait according to the set speed
-            self.encoder.PrintAngle()
+            print (self.encoder.Angle())
             if ((self.encoder.Angle()<=(self.target_pos+self.trash_hold)) and (self.encoder.Angle()>=(self.target_pos-self.trash_hold))):
                 self.stop()
 

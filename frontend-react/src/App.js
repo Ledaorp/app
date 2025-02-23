@@ -11,6 +11,13 @@ function App() {
         m4: 0,
         m5: 0,
     });
+    const [e_data, e_setdata] = useState({
+        m1: 0,
+        m2: 0,
+        m3: 0,
+        m4: 0,
+        m5: 0,
+    });
     // Using useEffect for single rendering
     useEffect(() => {
         // Using fetch to fetch the api from 
@@ -37,6 +44,27 @@ function App() {
         evsData.onmessage = e=>{handleEvent(e.data)}
 
     });*/
+    
+    const fetchEncoderData = async () => {
+        try {
+          const response = await fetch('http://192.168.1.101:5000/motor');
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const e_data = await response.json();
+          e_setdata({
+            m1: data.angles.m1,
+            m2: data.angles.m2,
+            m3: data.angles.m3,
+            m4: data.angles.m4,
+            m5: data.angles.m5,
+        });
+        } catch (error) {
+          console.error("Could not fetch data:", error);
+          // Handle the error (e.g., display an error message to the user)
+        }
+      };
+
     const fetchData = async () => {
         try {
           const response = await fetch('http://localhost:5000/api/get/data');
@@ -73,7 +101,7 @@ function App() {
                                     "z": "0"
                                 }};
     
-          const response = await fetch('http://localhost:5000/api/set/data', {
+          const response = await fetch('http://192.168.1.101:5000/api/set/data', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -86,6 +114,7 @@ function App() {
           }
     
           console.log("Data updated successfully!");
+          fetchData();
           fetchData();
         } catch (error) {
           console.error("Could not update data:", error);
@@ -124,6 +153,9 @@ function App() {
                     </div>
                     <div>
                         <p>Angle: {data[id]}</p>
+                    </div>
+                    <div>
+                        <p>Angle: {e_data[id]}</p>
                     </div>
                     <div>
                         <select name={`${id}_select_value`} value={select_values[`${id}_select_value`]} onChange={onSelect}>
