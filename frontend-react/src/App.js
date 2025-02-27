@@ -76,7 +76,6 @@ function App() {
 
     const updateData = async () => {
         try {
-          // Example:  Modify the data (you would get this from user input)
           const newData = {     "angles": {
                                     "m1":angle_values.m1_value,
                                     "m2":angle_values.m2_value,
@@ -108,7 +107,6 @@ function App() {
           console.error("Could not update data:", error);
         }
       };
-
 
 
     //values of sliders
