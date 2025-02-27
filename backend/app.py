@@ -4,7 +4,7 @@ import os
 import importlib
 from flask_cors import CORS
 import json
-app = Flask('app', static_folder= "../dist/static", template_folder= "../dist")
+app = Flask('app', static_folder= "../frontend-react/build/static", template_folder= "../frontend-react/build")
 CORS(app)  
 
 #Comands:

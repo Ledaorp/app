@@ -1,14 +1,14 @@
 .App {
   text-align: center;
-  background-color: transparent;
+  background-color:#1e222e;
   flex-direction: row;
   display: flex;
-
   height: 100vh;
+  overflow-y:hidden;
 }
 
-.App div{
-  overflow-y: scroll;
+.App-scrollable{
+  overflow-y:scroll;
 
 }
 
@@ -37,6 +37,8 @@
   align-items:left;
   margin: 50px;
   padding:20px;
+  min-width: 25vh;
+  overflow-y:hidden;
 }
 .cnm div{
   color:#61dafb;
@@ -44,4 +46,73 @@
   flex-grow: all;
   display: flex;
   flex-direction: row;
+  overflow-y:hidden;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background:#282c34; 
+}
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
+select {
+  padding: 3px 12px;
+  outline: none;
+  width: 250px;
+  margin-bottom: 20px;
+  background-color: #282c34;
+  color: #61dafb;
+}
+
+
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; 
+  background:#1e222e;
+}
+.slider:hover{
+  opacity: 1
+}
+.slider::-moz-range-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%; 
+  background:#61dafb;
+  cursor: pointer;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%; 
+  background:#61dafb;
+  cursor: pointer;
+}
+button {
+  color: #61dafb;
+  background-color: #1e222e;
+  padding: 0.5em;
+  margin-block: 0.5em
+}
+input{
+  color: #61dafb;
+  background-color: #282c34;
+  font-size: 1em;
+}
+
+.xyzinput{
+  margin: 1vh;
 }

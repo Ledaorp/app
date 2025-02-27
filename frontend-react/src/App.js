@@ -10,30 +10,13 @@ function App() {
         m3: 0,
         m4: 0,
         m5: 0,
-    });
-    const [e_data, e_setdata] = useState({
-        m1: 0,
-        m2: 0,
-        m3: 0,
-        m4: 0,
-        m5: 0,
+        x: 0,
+        y: 0,
+        z: 0,
     });
     // Using useEffect for single rendering
     useEffect(() => {
-        // Using fetch to fetch the api from 
-        // flask server it will be redirected to proxy
-        fetch("/api/get/data").then((res) =>
-            res.json().then((data) => {
-                // Setting a data from api
-                setdata({
-                    m1: data.angles.m1,
-                    m2: data.angles.m2,
-                    m3: data.angles.m3,
-                    m4: data.angles.m4,
-                    m5: data.angles.m5,
-                });
-            })
-        );
+        fetchData();
     }, []);
 
     /*useEffect(() => {
@@ -51,13 +34,16 @@ function App() {
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
-          const e_data = await response.json();
-          e_setdata({
+          const data = await response.json();
+          setdata({
             m1: data.angles.m1,
             m2: data.angles.m2,
             m3: data.angles.m3,
             m4: data.angles.m4,
             m5: data.angles.m5,
+            x: data.position.x,
+            y: data.position.y,
+            z: data.position.z,
         });
         } catch (error) {
           console.error("Could not fetch data:", error);
@@ -78,6 +64,9 @@ function App() {
             m3: data.angles.m3,
             m4: data.angles.m4,
             m5: data.angles.m5,
+            x: data.position.x,
+            y: data.position.y,
+            z: data.position.z,
         });
         } catch (error) {
           console.error("Could not fetch data:", error);
@@ -96,9 +85,9 @@ function App() {
                                     "m5":angle_values.m5_value
                                 },
                                 "position":{
-                                    "x": "0",
-                                    "y": "0",
-                                    "z": "0"
+                                    "x": angle_values.x_value,
+                                    "y": angle_values.y_value,
+                                    "z": angle_values.z_value,
                                 }};
     
           const response = await fetch('http://192.168.1.101:5000/api/set/data', {
@@ -114,8 +103,7 @@ function App() {
           }
     
           console.log("Data updated successfully!");
-          fetchData();
-          fetchData();
+          fetchEncoderData();
         } catch (error) {
           console.error("Could not update data:", error);
         }
@@ -124,7 +112,7 @@ function App() {
 
 
     //values of sliders
-    const initial_angle_values={m1_value:data.m1,m2_value:data.m2,m3_value:data.m3,m4_value:data.m4,m5_value:data.m5};
+    const initial_angle_values={m1_value:data.m1,m2_value:data.m2,m3_value:data.m3,m4_value:data.m4,m5_value:data.m5,x_value:data.x,y_value:data.y,z_value:data.z};
 
     const [angle_values,setValue] = useState(initial_angle_values);
     const onChange = (event) => {
@@ -144,8 +132,7 @@ function App() {
         <div className="App">
             {/*<header className="App-header">
             </header>*/}
-            <div>
-            <div>
+            <div className="App-scrollable">
             {identifiers.map(id => (
                 <div className="cnm" key={id}>
                     <div>
@@ -153,9 +140,6 @@ function App() {
                     </div>
                     <div>
                         <p>Angle: {data[id]}</p>
-                    </div>
-                    <div>
-                        <p>Angle: {e_data[id]}</p>
                     </div>
                     <div>
                         <select name={`${id}_select_value`} value={select_values[`${id}_select_value`]} onChange={onSelect}>
@@ -166,7 +150,7 @@ function App() {
                     <div>
                         {select_values[`${id}_select_value`] === "scrollbar" && (
                             <div>
-                                <input
+                                <input class="slider"
                                     type="range"
                                     min="0"
                                     max="360"
@@ -195,25 +179,40 @@ function App() {
             ))}
         </div>
 
-
-
-              </div>
             <div>
             <div class="cnm">
                         <div>
                             <h4>Ovládání ramena</h4>
                         </div>
                         <div>
-                            <p>X: {"nedostupné"}</p>
+                            <p>X:</p>
+                            <input class="xyzinput"
+                                type="number"
+                                name={'x_value'}
+                                value={angle_values.x_value}
+                                onChange={onChange}
+                                defaultValue={0}
+                            />
                         </div>
                         <div>
-                            <p>Y: {"nedostupné"}</p>
+                            <p>Y:</p>
+                            <input class="xyzinput"
+                                type="number"
+                                name={'y_value'}
+                                value={angle_values.y_value}
+                                onChange={onChange}
+                                defaultValue={0}
+                            />
                         </div>
                         <div>
-                            <p>Z: {"nedostupné"}</p>
-                        </div>
-                        <div>
-
+                            <p>Z:</p>
+                            <input class="xyzinput"
+                                type="number"
+                                name={'z_value'}
+                                value={angle_values.z_value}
+                                onChange={onChange}
+                                defaultValue={0}
+                            />
                         </div>
                     </div>
                     

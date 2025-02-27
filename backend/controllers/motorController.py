@@ -10,26 +10,36 @@ BPmotorController = Blueprint("motorController", __name__)
 
 @BPmotorController.route('/motor',methods=['GET'])
 def begin(): 
-    m1,m2,m3,m4,m5 = Motor.Motor(0,0)
+    print  ("begin mc ------------------------------1")
     m1=setup(send('config.json'))
     start(send('data.json'),m1)
-    m1.track_target
     if m1:
-        encoder_value = m1.get_encoder_value()
-        return jsonify({
-            "m1": encoder_value,
-            "m2": 0,
-            "m3": 0,
-            "m4": 0,
-            "m5": 0})
+        encoder_value = m1.get_encoder()
+        ("begin mc ------------------------------3")
+        return jsonify(
+            {
+                "angles":{
+                    "m1": encoder_value,
+                    "m2": 0,
+                    "m3": 0,
+                    "m4": 0,
+                    "m5": 0,
+                },
+                "position":{
+                    "x":0,
+                    "y":0,
+                    "z":0,
+                }
+            })
     else:
         return jsonify({"error": "Motor not initialized"}), 404
      
 
 def setup(config_json):
-    m1 = Motor.Motor(config_json['drivers'][0]['step'], config_json['drivers'][0]['dir'],config_json['drivers'][0]['enable'], speed_sps=10)
+    m1 = Motor.Motor(int(config_json['drivers'][0]['step']), int(config_json['drivers'][0]['dir']),int(config_json['drivers'][0]['enable']), speed_sps=10)
+    #m1 = Motor.Motor(55,73,74)
     return (m1)
 
 def start(angles_json,m1):
-    m1.target_deg(angles_json['angles']['m1'])
+    m1.target_deg((int) (angles_json['angles']['m1']))
     return(True)

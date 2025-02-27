@@ -34,6 +34,7 @@ class Motor:
 
     def target_deg(self, t):
         self.target_pos = t
+        self.track_target()
 
     def step(self):
         gpio.output(self.step_pin, gpio.HIGH)  # Set step pin HIGH
@@ -62,7 +63,6 @@ class Motor:
     def track_target(self):
         self.running = True
         self.get_direction()
-        self.set_direction()
         while self.running:
             
             self.step()
@@ -86,6 +86,7 @@ class Motor:
                     self.invert_dir=True
                 elif(self.target_pos<self.encoder.Angle()):
                     self.invert_dir=True
+
 '''    
     def update(self):
         if self.free_run_mode > 0:
