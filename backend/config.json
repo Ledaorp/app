@@ -1,23 +1,22 @@
 {
-"ip":"",
-"port":"",
-"com":"",
-"as5600adr":"",
-"multiplexadr":"0x70",
-"displayadr":"",
-"encoders":[{"A":"","B":"","btn":""},
-{"A":"","B":"","btn":""},
-{"A":"","B":"","btn":""}],
-"drivers":[{"step":"55","dir":"73","enable":"74"},
-{"step":"","dir":"","enable":""},
-{"step":"","dir":"","enable":""},
-{"step":"","dir":"","enable":""},
-{"step":"","dir":"","enable":""},
-{"step":"","dir":"","enable":""}],
-"joints":[{"jointindex":"", "motorindex":""},
-{"jointindex":"", "motorindex":""},
-{"jointindex":"", "motorindex":""},
-{"jointindex":"", "motorindex":""},
-{"jointindex":"", "motorindex":""}]
-
-}
+    "ip":"",
+    "port":"",
+    "com":"",
+    "as5600adr":"",
+    "multiplexadr":"0x70",
+    "displayadr":"",
+    "encoder":{"A":"72","B":"76","btn":"109"},
+    
+    "drivers":[{"step":"55","dir":"73","enable":"74"},
+    {"step":"68","dir":"15","enable":"74"},
+    {"step":"54","dir":"56","enable":"74"},
+    {"step":"70","dir":"75","enable":"74"},
+    {"step":"108","dir":"80","enable":"74"}
+    ],
+    "joints":[{"jointindex":"", "motorindex":""},
+    {"jointindex":"", "motorindex":""},
+    {"jointindex":"", "motorindex":""},
+    {"jointindex":"", "motorindex":""},
+    {"jointindex":"", "motorindex":""}]
+    
+    }
