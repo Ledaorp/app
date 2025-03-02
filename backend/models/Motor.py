@@ -61,15 +61,15 @@ class Motor:
         return self.encoder.Angle()
 
     def track_target(self):
-        self.running = True
-        self.get_direction()
-        while self.running:
-            
-            self.step()
-            #time.sleep(self.step_time)  # Wait according to the set speed
-            print (self.encoder.Angle())
-            if ((self.encoder.Angle()<=(self.target_pos+self.trash_hold)) and (self.encoder.Angle()>=(self.target_pos-self.trash_hold))):
-                self.stop()
+        if ((self.encoder.Angle()<=(self.target_pos+self.trash_hold)) and (self.encoder.Angle()>=(self.target_pos-self.trash_hold))):
+            self.stop()
+        else:
+            self.running = True
+            self.get_direction()
+            while self.running:
+                self.step()
+                if ((self.encoder.Angle()<=(self.target_pos+self.trash_hold)) and (self.encoder.Angle()>=(self.target_pos-self.trash_hold))):
+                    self.stop()
 
     def get_direction(self):
             if(self.target_pos+180>360):
@@ -86,6 +86,7 @@ class Motor:
                     self.invert_dir=True
                 elif(self.target_pos<self.encoder.Angle()):
                     self.invert_dir=True
+            self.set_direction()
 
 '''    
     def update(self):

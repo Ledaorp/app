@@ -9,14 +9,11 @@ function App() {
         m2: 0,
         m3: 0,
         m4: 0,
-        m5: 0,
-        x: 0,
-        y: 0,
-        z: 0,
+        m5: 0
     });
     // Using useEffect for single rendering
     useEffect(() => {
-        fetchData();
+        fetchEncoderData();
     }, []);
 
     /*useEffect(() => {
@@ -30,49 +27,49 @@ function App() {
     
     const fetchEncoderData = async () => {
         try {
-          const response = await fetch('http://192.168.1.101:5000/motor');
+          const response = await fetch('http://192.168.1.101:5000/motors/setAngles');
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
           const data = await response.json();
           setdata({
-            m1: data.angles.m1,
-            m2: data.angles.m2,
-            m3: data.angles.m3,
-            m4: data.angles.m4,
-            m5: data.angles.m5,
-            x: data.position.x,
-            y: data.position.y,
-            z: data.position.z,
+            m1: data.m1,
+            m2: data.m2,
+            m3: data.m3,
+            m4: data.m4,
+            m5: data.m5
         });
         } catch (error) {
           console.error("Could not fetch data:", error);
           // Handle the error (e.g., display an error message to the user)
         }
       };
-
-    const fetchData = async () => {
+      const fetchPositionData = async () => {
         try {
-          const response = await fetch('http://localhost:5000/api/get/data');
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const newData = {     "position": {
+                                      "x":angle_values.x_value,
+                                      "y":angle_values.y_value,
+                                      "z":angle_values.z_value,
+                                  }
+                              };
+      
+            const response = await fetch('http://192.168.1.101:5000/motors/position', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(newData)
+            });
+      
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            fetchEncoderData();
+          } catch (error) {
+            console.error("Could not update data:", error);
           }
-          const data = await response.json();
-          setdata({
-            m1: data.angles.m1,
-            m2: data.angles.m2,
-            m3: data.angles.m3,
-            m4: data.angles.m4,
-            m5: data.angles.m5,
-            x: data.position.x,
-            y: data.position.y,
-            z: data.position.z,
-        });
-        } catch (error) {
-          console.error("Could not fetch data:", error);
-          // Handle the error (e.g., display an error message to the user)
-        }
-      };
+        };
+
 
     const updateData = async () => {
         try {
@@ -82,12 +79,8 @@ function App() {
                                     "m3":angle_values.m3_value,
                                     "m4":angle_values.m4_value,
                                     "m5":angle_values.m5_value
-                                },
-                                "position":{
-                                    "x": angle_values.x_value,
-                                    "y": angle_values.y_value,
-                                    "z": angle_values.z_value,
-                                }};
+                                }
+                            };
     
           const response = await fetch('http://192.168.1.101:5000/api/set/data', {
             method: 'POST',
@@ -211,6 +204,9 @@ function App() {
                                 onChange={onChange}
                                 defaultValue={0}
                             />
+                        </div>
+                        <div>
+                        <button onClick={fetchPositionData}>Set position</button>
                         </div>
                     </div>
                     
