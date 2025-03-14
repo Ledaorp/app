@@ -1,4 +1,3 @@
-from random import randint
 from flask import Flask,render_template,jsonify, request
 import os
 import importlib
@@ -26,17 +25,50 @@ def register_blueprints(app):
 
 #api
 
-
-
 def set(file_name):
+    response_object = {'status': 'success'}
+    try:
+        with open(file_name, 'r') as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        data = {
+            'angles': {
+                'm1': 0,
+                'm2': 0,
+                'm3': 0,
+                'm4': 0,
+                'm5': 0
+            },
+            'position': {
+                'x': 0,
+                'y': 0,
+                'z': 0
+            }
+        }
+    new_data = request.get_json()
+    if 'angles' in new_data:
+        for key, value in new_data['angles'].items():
+            if key in data['angles']:
+                data['angles'][key] = value
+                
+    if 'positions' in new_data:
+        for key, value in new_data['positions'].items():
+            if key in data['positions']:
+                data['positions'][key] = value
+                
+    with open(file_name, 'w') as file:
+        json.dump(data, file, indent=4)
+    response_object['message'] = 'Data updated!'
+    return jsonify(response_object)
+
+'''def set(file_name):
     response_object = {'status':'success'}
     data = request.get_json()
     response_object['message'] ='Data added!'
     with open(file_name, 'w') as file:
         json.dump(data, file, indent=4)
     file.close
-    
-    return jsonify(response_object)
+    return jsonify(response_object)'''
 
 def send(file_name):
     with open(file_name, 'r') as file:
@@ -67,6 +99,6 @@ def basic():
     return render_template('index.html')
 #starting aplication
 if __name__ == '__main__':
-    register_blueprints(app)
+    #register_blueprints(app)
     app.run(host='0.0.0.0', port=5000,debug=True)
     

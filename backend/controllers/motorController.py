@@ -4,7 +4,8 @@ import time
 import threading
 from periphery import I2C
 from app import send, set
-
+import numpy as np
+from visual_kinematics.RobotSerial import *
 
 BPmotorController = Blueprint("motorController", __name__)
    
@@ -30,34 +31,6 @@ def update_target_angles():
             target_angles[i] = getAngle(send('data.json'),f'm{i+1}')
             time.sleep(1)  
 
-@BPmotorController.route('/motors/setAngles',methods=['GET'])
-def begin(): 
-    if len(motors) == 0:
-        setup_motors(send('config.json'))
-    for i in range(motor_count):
-        thread = threading.Thread(target=motor_thread, args=(i,))
-        thread.daemon = True
-        thread.start()
-    angle_updater_thread = threading.Thread(target=update_target_angles)
-    angle_updater_thread.daemon = True
-    angle_updater_thread.start()
-    
-    encoder_values = {}
-    for i, motor in enumerate(motors):
-        motor.target_deg(getAngle(send('data.json'),f'm{i+1}'))
-        encoder_values[f'm{i+1}'] = motor.get_encoder()
-    return encoder_values
-  
-  
-@BPmotorController.route('/motors/position',methods=['POST'])
-def possition(): 
-    #handle inverse kynematics and set the position
-    return "succes"
-
-def getAngle(angles_json,motorId):
-    return((int) (angles_json['angles'][motorId]))
-
-
 def motor_thread(motor_index):
     while True:
         with angle_lock:
@@ -71,3 +44,38 @@ def motor_thread(motor_index):
             motors.stop()
 
         time.sleep(0.1)  
+
+def __init__():
+    if len(motors) == 0:
+        setup_motors(send('config.json'))
+    for i in range(motor_count):
+        thread = threading.Thread(target=motor_thread, args=(i,))
+        thread.daemon = True
+        thread.start()
+    angle_updater_thread = threading.Thread(target=update_target_angles)
+    angle_updater_thread.daemon = True
+    angle_updater_thread.start()
+
+@BPmotorController.route('/motors/setAngles',methods=['GET'])
+def begin():
+    encoder_values = {}
+    for i, motor in enumerate(motors):
+        motor.target_deg(getAngle(send('data.json'),f'm{i+1}'))
+        encoder_values[f'm{i+1}'] = motor.get_encoder()
+    return encoder_values
+  
+  
+@BPmotorController.route('/motors/position',methods=['POST'])
+def possition(): 
+    json = send("config.json")["dh"]
+    robot = RobotSerial(dh_params=np.array(json))
+    position = np.array([[0.5], [1.], [1]])
+    rotation = np.array([0, 0., 0])
+    end = Frame.from_euler_3(rotation,position)
+    joint_angles = robot.inverse(end)
+    return joint_angles
+
+def getAngle(angles_json,motorId):
+    return((int) (angles_json['angles'][motorId]))
+
+

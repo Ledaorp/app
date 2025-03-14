@@ -38,9 +38,9 @@ class Motor:
 
     def step(self):
         gpio.output(self.step_pin, gpio.HIGH)  # Set step pin HIGH
-        time.sleep(0.001)  # Pulse duration
+        time.sleep(self.step_time)  # Pulse duration
         gpio.output(self.step_pin, gpio.LOW)   # Set step pin LOW
-        time.sleep(0.001)  # Pulse duration
+        time.sleep(self.step_time)  # Pulse duration
         #self.pos += 1
 
     def speed(self, sps):
