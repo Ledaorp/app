@@ -3,7 +3,7 @@ const PositionControl = ({ angleValues, handlePositionChange, updatePositionData
     return (
         <div className="cnm">
             <h4>Ovládání ramena</h4>
-            <div>
+            <div class="xyzinput">
                 <p>X:</p>
                 <input
                     type="number"
@@ -12,10 +12,10 @@ const PositionControl = ({ angleValues, handlePositionChange, updatePositionData
                     onChange={(e) => handlePositionChange('x_value', e.target.value)}
                 />
             </div>
-            <div>
+            <div class="xyzinput">
                 <button onClick={() => { updatePositionData({ "x": angleValues.x_value })}}>Set position</button>
             </div>
-            <div>
+            <div class="xyzinput">
                 <p>Y:</p>
                 <input
                     type="number"
@@ -24,10 +24,10 @@ const PositionControl = ({ angleValues, handlePositionChange, updatePositionData
                     onChange={(e) => handlePositionChange('y_value', e.target.value)}
                 />
             </div>
-            <div>
+            <div class="xyzinput">
                 <button onClick={() => { updatePositionData({ "y": angleValues.y_value })}}>Set position</button>
             </div>
-            <div>
+            <div class="xyzinput">
                 <p>Z:</p>
                 <input
                     type="number"
@@ -36,7 +36,7 @@ const PositionControl = ({ angleValues, handlePositionChange, updatePositionData
                     onChange={(e) => handlePositionChange('z_value', e.target.value)}
                 />
             </div>
-            <div>
+            <div class="xyzinput">
                 <button onClick={() => { updatePositionData({ "z": angleValues.z_value })}}>Set position</button>
             </div>
         </div>

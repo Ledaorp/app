@@ -117,3 +117,12 @@ input{
 .xyzinput{
   margin: 1vh;
 }
+.xyzinput button{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cnm div div {
+  margin: 1vh;
+}

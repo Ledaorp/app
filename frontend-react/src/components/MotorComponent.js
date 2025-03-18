@@ -1,5 +1,5 @@
 import React from 'react';
-const MotorControl = ({ id, angleValue, handleAngleChange, updateMotorData }) => {
+const MotorControl = ({ id,data, angleValue, handleAngleChange, updateMotorData }) => {
     const [selectValue, setSelectValue] = React.useState("scrollbar");
 
     const onChange = (event) => {
@@ -16,7 +16,7 @@ const MotorControl = ({ id, angleValue, handleAngleChange, updateMotorData }) =>
                 <h4>{id.toUpperCase()}</h4>
             </div>
             <div>
-                <p>Angle: {angleValue}</p>
+                <p>Angle: {data[id]}</p>
             </div>
             <div>
                 <select name={`${id}_select_value`} value={selectValue} onChange={onSelect}>

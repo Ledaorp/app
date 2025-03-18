@@ -28,6 +28,7 @@ class AS5600:
         self.i2c.transfer(self.DEVICE_AS5600, [read_msg])
         
         angle = (read_msg.data[0] << 8) | read_msg.data[1]
+        self.close
         return angle & 0x0FFF
 
     def Angle(self):

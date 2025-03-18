@@ -17,8 +17,10 @@ function App() {
     const identifiers = ['m1', 'm2', 'm3', 'm4', 'm5'];
 
     useEffect(() => {
-      fetchData();
-    }, []);
+      fetchData('http://192.168.1.101:5000/motors/setAngles');
+      const ini = setInterval(() => {fetchData('http://192.168.1.101:5000/motors/setAngles');}, 5000); 
+      return () => clearInterval(ini);
+    },[]);
 
     const fetchData = async (url) => {
       try {
@@ -28,16 +30,6 @@ function App() {
           }
           const data = await response.json();
           setData(data);
-          setAngleValues({
-              m1_value: data.m1,
-              m2_value: data.m2,
-              m3_value: data.m3,
-              m4_value: data.m4,
-              m5_value: data.m5,
-              x_value: angleValues.x_value,
-              y_value: angleValues.y_value,
-              z_value: angleValues.z_value
-          });
       } catch (error) {
           console.error("Could not fetch data:", error);
       }
@@ -91,6 +83,7 @@ function App() {
                     <MotorControl
                         key={id}
                         id={id}
+                        data={data}
                         angleValue={angleValues[`${id}_value`]}
                         handleAngleChange={handleAngleChange}
                         updateMotorData={updateMotorData}

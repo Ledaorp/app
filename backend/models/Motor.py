@@ -1,9 +1,10 @@
 import time
+import threading
 import gpio
 from models import Encoder
 
 class Motor:
-    def __init__(self, step_pin, dir_pin, en_pin=None, encoder_channel=0, steps_per_rev=200, speed_sps=10, invert_dir=False, transfer = 0):
+    def __init__(self, step_pin, dir_pin, en_pin=None, encoder_channel=0, steps_per_rev=200, speed_sps=0.0001, invert_dir=False, transfer = 0):
         # Initialize GPIO pin numbers
         self.step_pin = step_pin
         self.dir_pin = dir_pin
@@ -14,9 +15,8 @@ class Motor:
         # Setup GPIO modes
         gpio.setup(step_pin, gpio.OUT)
         gpio.setup(dir_pin, gpio.OUT)
-        if en_pin is not None:
-            gpio.setup(en_pin, gpio.OUT)
-            gpio.output(en_pin, gpio.HIGH)
+        gpio.setup(en_pin, gpio.OUT)
+        gpio.output(en_pin, gpio.HIGH)
 
         self.invert_dir = invert_dir
         
@@ -30,22 +30,23 @@ class Motor:
         self.transfer = transfer
         
         self.running = False
-        self.step_time = 0.01 / self.steps_per_sec  # Time per step (in seconds)
+        #self.step_time = 0.01 / self.steps_per_sec  # Time per step (in seconds)
 
     def target_deg(self, t):
         self.target_pos = t
+        self.pos = self.encoder.Angle()
+        self.get_direction()
         self.track_target()
 
     def step(self):
         gpio.output(self.step_pin, gpio.HIGH)  # Set step pin HIGH
-        time.sleep(self.step_time)  # Pulse duration
+        time.sleep(self.steps_per_sec)  # Pulse duration
         gpio.output(self.step_pin, gpio.LOW)   # Set step pin LOW
-        time.sleep(self.step_time)  # Pulse duration
-        #self.pos += 1
+        time.sleep(self.steps_per_sec)  # Pulse duration
 
     def speed(self, sps):
         self.steps_per_sec = sps
-        self.step_time = 0.001 / self.steps_per_sec
+        #self.step_time = 0.001 / self.steps_per_sec
 
     def stop(self):
         self.running = False
@@ -53,38 +54,46 @@ class Motor:
 
     def set_direction(self):
         if(self.invert_dir):
-            gpio.output(self.dir_pin,gpio.LOW)
-        else:
             gpio.output(self.dir_pin,gpio.HIGH)
+        else:
+            gpio.output(self.dir_pin,gpio.LOW)
 
     def get_encoder(self):
-        return self.encoder.Angle()
+        i = self.encoder.Angle()
+        return i
 
     def track_target(self):
-        if ((self.encoder.Angle()<=(self.target_pos+self.trash_hold)) and (self.encoder.Angle()>=(self.target_pos-self.trash_hold))):
+        if ((self.pos<=(self.target_pos+self.trash_hold)) and (self.pos>=(self.target_pos-self.trash_hold))):
             self.stop()
         else:
             self.running = True
-            self.get_direction()
+            
             while self.running:
                 self.step()
-                if ((self.encoder.Angle()<=(self.target_pos+self.trash_hold)) and (self.encoder.Angle()>=(self.target_pos-self.trash_hold))):
+                self.pos = self.encoder.Angle()
+                if ((self.pos<=(self.target_pos+self.trash_hold)) and (self.pos>=(self.target_pos-self.trash_hold))):
                     self.stop()
+                    
+    '''async def thred_encoder_angle_update(self):
+        while True:
+            await asyncio.sleep(1)
+            pos = self.get_encoder()
+            print(pos)'''
 
     def get_direction(self):
-            if(self.target_pos+180>360):
-                if(self.target_pos<self.encoder.Angle() and self.target_pos>self.encoder.Angle()-180):
+            if((self.target_pos+180)>360):
+                if(self.target_pos<self.pos and self.target_pos>(self.pos-180)):
                     self.invert_dir=True
-                elif(self.target_pos>self.encoder.Angle()):
+                elif(self.target_pos>self.pos):
                     self.invert_dir=False
-                elif(self.target_pos<(self.encoder.Angle()-180)):
+                elif(self.target_pos<(self.pos-180)):
                     self.invert_dir=False
             else:
-                if(self.target_pos>self.encoder.Angle() and self.target_pos<self.encoder.Angle()+180):
+                if(self.target_pos>self.pos and self.target_pos<(self.pos+180)):
                     self.invert_dir=False
-                if((self.target_pos>=self.encoder.Angle()+180)):    
+                if((self.target_pos>=(self.pos+180))):    
                     self.invert_dir=True
-                elif(self.target_pos<self.encoder.Angle()):
+                elif(self.target_pos<self.pos):
                     self.invert_dir=True
             self.set_direction()
 
