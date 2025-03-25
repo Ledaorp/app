@@ -9,33 +9,33 @@ class Motor:
         self.step_pin = step_pin
         self.dir_pin = dir_pin
         self.en_pin = en_pin
-        
-        self.encoder=Encoder.AS5600()
-        self.encoder.set_channel(encoder_channel)
+
+        self.chanell = encoder_channel
         # Setup GPIO modes
         gpio.setup(step_pin, gpio.OUT)
         gpio.setup(dir_pin, gpio.OUT)
         gpio.setup(en_pin, gpio.OUT)
         gpio.output(en_pin, gpio.HIGH)
+        gpio.output(step_pin, gpio.LOW)
 
         self.invert_dir = invert_dir
         
         self.target_pos = 0
         self.pos = 0
+        self.poss = []
         
         self.steps_per_sec = speed_sps
         self.steps_per_rev = steps_per_rev
         
-        self.trash_hold = 5
+        self.trash_hold = 6
         self.transfer = transfer
         
         self.running = False
         #self.step_time = 0.01 / self.steps_per_sec  # Time per step (in seconds)
 
     def target_deg(self, t):
-        self.target_pos = t
-        self.pos = self.encoder.Angle()
-        self.get_direction()
+        #self.target_pos = t
+        #self.get_direction()
         self.track_target()
 
     def step(self):
@@ -50,16 +50,22 @@ class Motor:
 
     def stop(self):
         self.running = False
+        gpio.output(self.step_pin,gpio.HIGH)
 
 
     def set_direction(self):
         if(self.invert_dir):
-            gpio.output(self.dir_pin,gpio.HIGH)
-        else:
             gpio.output(self.dir_pin,gpio.LOW)
+        else:
+            gpio.output(self.dir_pin,gpio.HIGH)
 
-    def get_encoder(self):
-        i = self.encoder.Angle()
+    def get_encoder(self, encoder):
+        if encoder is None:
+            print("Error encoder is None")
+            return (0)
+        encoder.set_channel(self.chanell)
+        i = encoder.Angle()
+        #self.encoder.close()
         return i
 
     def track_target(self):
@@ -70,7 +76,6 @@ class Motor:
             
             while self.running:
                 self.step()
-                self.pos = self.encoder.Angle()
                 if ((self.pos<=(self.target_pos+self.trash_hold)) and (self.pos>=(self.target_pos-self.trash_hold))):
                     self.stop()
                     
@@ -83,19 +88,49 @@ class Motor:
     def get_direction(self):
             if((self.target_pos+180)>360):
                 if(self.target_pos<self.pos and self.target_pos>(self.pos-180)):
-                    self.invert_dir=True
+                    if(self.invert_dir==True):
+                        gpio.output(self.dir_pin,gpio.LOW)
+                    else:
+                        gpio.output(self.dir_pin,gpio.HIGH)
+                    
                 elif(self.target_pos>self.pos):
-                    self.invert_dir=False
+                    if(self.invert_dir==False):
+                        gpio.output(self.dir_pin,gpio.LOW)
+                    else:
+                        gpio.output(self.dir_pin,gpio.HIGH)
                 elif(self.target_pos<(self.pos-180)):
-                    self.invert_dir=False
+                    if(self.invert_dir==False):
+                        gpio.output(self.dir_pin,gpio.LOW)
+                    else:
+                        gpio.output(self.dir_pin,gpio.HIGH)
             else:
                 if(self.target_pos>self.pos and self.target_pos<(self.pos+180)):
-                    self.invert_dir=False
+                    if(self.invert_dir==False):
+                        gpio.output(self.dir_pin,gpio.LOW)
+                    else:
+                        gpio.output(self.dir_pin,gpio.HIGH)
                 if((self.target_pos>=(self.pos+180))):    
-                    self.invert_dir=True
+                    if(self.invert_dir==True):
+                        gpio.output(self.dir_pin,gpio.LOW)
+                    else:
+                        gpio.output(self.dir_pin,gpio.HIGH)
                 elif(self.target_pos<self.pos):
-                    self.invert_dir=True
-            self.set_direction()
+                    if(self.invert_dir==True):
+                        gpio.output(self.dir_pin,gpio.LOW)
+                    else:
+                        gpio.output(self.dir_pin,gpio.HIGH)
+                        
+    def add_pos_angle(self, angle):
+        i = len(self.poss)
+        if(i<7):
+            self.poss.append(angle)
+        else:
+            self.poss.pop(0)
+            self.poss.insert(7,angle)
+        #print(self.poss)
+        
+    def __str__(self):
+        return (self.pos)
 
 '''    
     def update(self):

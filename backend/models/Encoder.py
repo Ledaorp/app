@@ -13,10 +13,8 @@ class AS5600:
         if channel < 0 or channel > 7:
             raise ValueError("Channel must be between 0 and 7")
         
-        command = 1 << channel  # Set the bit corresponding to the channel
-        write_msg = I2C.Message([command])  # Create a message with the command
-        
-        # Use transfer to send the command to the multiplexer
+        command = 1 << channel  
+        write_msg = I2C.Message([command]) 
         self.i2c.transfer(self.multiplexer_address, [write_msg])
 
     def ReadRawAngle(self):
@@ -29,6 +27,7 @@ class AS5600:
         
         angle = (read_msg.data[0] << 8) | read_msg.data[1]
         self.close
+        
         return angle & 0x0FFF
 
     def Angle(self):

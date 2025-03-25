@@ -67,7 +67,7 @@ function App() {
         const id = Object.keys(motorData)[0];
         const value = motorData[id];
         updateData("angles",id,value);
-        await fetchData('http://192.168.1.101:5000/motors/setAngles');
+        //await fetchData('http://192.168.1.101:5000/motors/setAngles');
     };
     const updatePositionData = async (positionData) => {
       const id = Object.keys(positionData)[0];

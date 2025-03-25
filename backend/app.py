@@ -55,10 +55,11 @@ def set(file_name):
         for key, value in new_data['positions'].items():
             if key in data['positions']:
                 data['positions'][key] = value
-                
-    with open(file_name, 'w') as file:
-        json.dump(data, file, indent=4)
-    response_object['message'] = 'Data updated!'
+    try:           
+        with open(file_name, 'w') as file:
+            json.dump(data, file, indent=4)
+    except Exception as e: 
+            print(e)
     return jsonify(response_object)
 
 '''def set(file_name):
